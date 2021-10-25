@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Compras</title>
+
+    <link rel="stylesheet" href="styles/app.css">
+</head>
+<body>
+    <h1>Cadastro de Item</h1>
+
+    <form action="/adicionar" method="post">
+        <div class="form-field">
+            <label for="nome">Nome:</label>
+            <input id="nome" name="nome" />
+        </div>
+
+        <div class="form-field">
+            <label for="quantidade">Quantidade:</label>
+            <input id="quantidade" name="quantidade" />
+        </div>
+
+        <hr>
+
+        <button type="submit">Salvar</button>
+        <a href="/">Voltar</a>
+    </form>
+</body>
+</html>

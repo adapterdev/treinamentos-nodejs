@@ -1,0 +1,9 @@
+.form-field {
+    padding-bottom: 8px;
+}
+
+.form-field input {
+    position: absolute;
+    left: 110px;
+    min-width: 200px;
+}

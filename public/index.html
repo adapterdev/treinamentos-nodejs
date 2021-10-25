@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Compras</title>
+
+    <link rel="stylesheet" href="styles/app.css">
+</head>
+<body>
+    <h1>Lista de Compras</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Quantidade</th>
+            </tr>
+        </thead>
+
+        <tbody class="lista"></tbody>
+    </table>
+
+    <hr>
+
+    <a href="/adicionar">Incluir</a>
+    <a href="/limpar">Limpar Lista</a>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <script type="application/javascript">
+        $(document).ready(() => {
+            $.get({
+                url: '/dados',
+                method: 'GET',
+                success: function (data, status, xhr) {
+                    updateTabela(data.produtos);
+                }
+            });
+        });
+
+        function updateTabela(compras) {
+            if (Array.isArray(compras)) {
+                var lista = '';
+
+                compras.forEach(item => {
+                    lista += `
+                        <tr>
+                            <td>${item.nome}</td>
+                            <td>${item.quantidade}</td>
+                        </tr>
+                    `;
+                });
+
+                $('.lista').html(lista);
+            }
+        }
+    </script>
+</body>
+</html>
