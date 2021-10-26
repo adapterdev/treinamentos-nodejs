@@ -13,8 +13,10 @@
     <table>
         <thead>
             <tr>
+                <td hidden>ID</td>
                 <th>Produto</th>
                 <th>Quantidade</th>
+                <th>Ações</th>
             </tr>
         </thead>
 
@@ -24,13 +26,13 @@
     <hr>
 
     <a href="/adicionar">Incluir</a>
-    <a href="/limpar">Limpar Lista</a>
+    <button onclick="limparLista()">Limpar</button>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
     <script type="application/javascript">
         $(document).ready(() => {
-            $.get({
+            $.ajax({
                 url: '/dados',
                 method: 'GET',
                 success: function (data, status, xhr) {
@@ -46,14 +48,43 @@
                 compras.forEach(item => {
                     lista += `
                         <tr>
+                            <td hidden>${item.id}</td>
                             <td>${item.nome}</td>
                             <td>${item.quantidade}</td>
+                            <td>
+                                <button id="${item.id}" onclick="editarItem(this.id)">Editar</button>
+                                <button id="${item.id}" onclick="removerItem(this.id)">Remover</button>
+                            </td>
                         </tr>
                     `;
                 });
 
                 $('.lista').html(lista);
             }
+        }
+
+        function removerItem(itemId) {
+            $.ajax({
+                url: `/delete?id=${itemId}`,
+                method: 'DELETE',
+                success: function (data, status, xhr) {
+                    window.location = '/';
+                }
+            });
+        }
+
+        function limparLista() {
+            $.ajax({
+                url: '/limpar',
+                method: 'POST',
+                success: function (data, status, xhr) {
+                    window.location = '/';
+                }
+            });
+        }
+
+        function editarItem(itemId) {
+            console.log(itemId);
         }
     </script>
 </body>

@@ -10,7 +10,7 @@
 <body>
     <h1>Cadastro de Item</h1>
 
-    <form action="/adicionar" method="post">
+    <form id="formulario" action="/adicionar" method="post">
         <div class="form-field">
             <label for="nome">Nome:</label>
             <input id="nome" name="nome" />
@@ -26,5 +26,16 @@
         <button type="submit">Salvar</button>
         <a href="/">Voltar</a>
     </form>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <script type="application/javascript">
+        $('#formulario').submit(function (e) {
+            e.preventDefault();
+            this.submit();
+
+            setTimeout(() => window.location = '/');
+        });
+    </script>
 </body>
 </html>
