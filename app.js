@@ -8,8 +8,10 @@ const hostname = '127.0.0.1';
 const port = 3000;
 
 const server = http.createServer(function (req, res) {
+    const urlObj = url.parse(req.url);
+    
     if (req.method === 'GET') {
-        if (req.url === '/') {
+        if (urlObj.pathname === '/') {
             res.setHeader('Content-Type', 'text/html; charset=utf-8;');
             
             fs.readFile('public/index.html', function (err, data) {
@@ -22,7 +24,7 @@ const server = http.createServer(function (req, res) {
                 res.statusCode = 200;
                 res.end(data);
             });
-        } else if (req.url === '/adicionar') {
+        } else if (urlObj.pathname === '/adicionar' || urlObj.pathname === '/editar') {
             res.setHeader('Content-Type', 'text/html; charset=utf-8;');
             
             fs.readFile('public/form.html', function (err, data) {
@@ -35,7 +37,7 @@ const server = http.createServer(function (req, res) {
                 res.statusCode = 200;
                 res.end(data);
             });
-        } else if (req.url === '/dados') {
+        } else if (urlObj.pathname === '/dados') {
             res.setHeader('Content-Type', 'application/json; charset=utf-8;');
             
             fs.readFile('db.json', function (err, data) {
@@ -48,6 +50,29 @@ const server = http.createServer(function (req, res) {
                 res.statusCode = 200;
                 res.end(data);
             });
+        } else if (urlObj.pathname === '/getProdutoById') {
+            res.setHeader('Content-Type', 'application/json; charset=utf-8;');
+            const query = parse(urlObj.query);
+
+            if (query.id === null && query.id === undefined) {
+                res.statusCode = 500;
+                res.end();
+            } else {
+                fs.readFile('db.json', function (err, data) {
+                    if (err) {
+                        console.error(err);
+                        res.statusCode = 500;
+                        return;
+                    }
+
+                    const db = JSON.parse(data);
+                    const item = db.produtos.find(p => p.id === query.id);
+                    
+                    res.statusCode = 200;
+                    res.end(JSON.stringify(item));
+                });
+            }
+            
         } else if (req.url == '/styles/app.css') {
             res.setHeader('Content-Type', 'text/css; charset=utf-8;');
             
@@ -69,7 +94,7 @@ const server = http.createServer(function (req, res) {
     }
 
     if (req.method === 'POST') {
-        if (req.url === '/adicionar') {
+        if (urlObj.pathname === '/adicionar') {
             let body = '';
 
             req.on('data', function (chunk) {
@@ -79,16 +104,25 @@ const server = http.createServer(function (req, res) {
             req.on('end', function () {
                 const item = parse(body);
                 const db = JSON.parse(fs.readFileSync('db.json'));
-                
-                item.id = Math.random().toString(36).slice(2);
-                db.produtos.push(item);
+
+                if (item.id !== null && item.id !== undefined && item.id.trim() !== '') {
+                    const idx = db.produtos.findIndex(p => p.id === item.id);
+
+                    if (idx >= 0) {
+                        db.produtos[idx].nome = item.nome;
+                        db.produtos[idx].quantidade = item.quantidade;
+                    }
+                } else {
+                    item.id = Math.random().toString(36).slice(2);
+                    db.produtos.push(item);
+                }
 
                 fs.writeFileSync('db.json', JSON.stringify(db));
 
                 res.statusCode = 200;
                 res.end();
             });
-        } else if (req.url === '/limpar') {
+        } else if (urlObj.pathname === '/limpar') {
             fs.readFile('db.json', function (err, data) {
                 if (err) {
                     console.error(err);
@@ -112,8 +146,6 @@ const server = http.createServer(function (req, res) {
     }
 
     if (req.method === 'DELETE') {
-        const urlObj = url.parse(req.url);
-
         if (urlObj.pathname === '/delete') {
             const query = parse(urlObj.query);
 

@@ -73,6 +73,10 @@
             });
         }
 
+        function editarItem(itemId) {
+            window.location = `/editar?id=${itemId}`;
+        }
+
         function limparLista() {
             $.ajax({
                 url: '/limpar',
@@ -81,10 +85,6 @@
                     window.location = '/';
                 }
             });
-        }
-
-        function editarItem(itemId) {
-            console.log(itemId);
         }
     </script>
 </body>
